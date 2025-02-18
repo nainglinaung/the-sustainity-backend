@@ -1,3 +1,16 @@
+export interface IMapping {
+    originalField: string;
+    desiredName: string;
+    desiredType: string;
+  }
+  
+export   interface IMappingDocument extends Document {
+      mappings: IMapping[];
+      name: string;
+  }
+  
+  
+
 interface MappingDefinition {
     originalField: string;
     desiredName: string;
@@ -11,6 +24,12 @@ export interface PreviewRequest {
 export interface ProcessRequest {
     mappingName: string;
     fileName: string;
+}
+
+export interface JobData {
+    mappingName: string;
+    fileName: string;
+    mappingData: Record<string, any>;
 }
 
 export interface SaveMappingRequest { 

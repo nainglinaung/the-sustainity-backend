@@ -1,15 +1,5 @@
 import { Schema, model, Document } from 'mongoose';
-
-interface IMapping {
-  originalField: string;
-  desiredName: string;
-  desiredType: string;
-}
-
-interface IMappingDocument extends Document {
-    mappings: IMapping[];
-    name: string;
-}
+import { IMapping, IMappingDocument } from '../types';
 
 const MappingFieldSchema = new Schema<IMapping>({
   originalField: {

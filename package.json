@@ -21,9 +21,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/bull": "^3.15.9",
     "@types/bunyan": "^1.8.11",
     "@types/mongoose": "^5.11.96",
     "@types/multer": "^1.4.12",
+    "bull": "^4.16.5",
     "bunyan": "^1.8.15",
     "csv-parse": "^5.6.0",
     "dotenv": "^16.4.7",
