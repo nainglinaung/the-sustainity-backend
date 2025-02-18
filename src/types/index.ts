@@ -1,7 +1,3 @@
-// filepath: /typescript-node-project/typescript-node-project/src/types/index.ts
-
-// This file is intentionally left blank.
-
 interface MappingDefinition {
     originalField: string;
     desiredName: string;
@@ -9,7 +5,11 @@ interface MappingDefinition {
 }
   
 export interface ProcessRequest {
+    mappingName: string;
     fileName: string;
+}
+
+export interface SaveMappingRequest { 
     mappings: MappingDefinition[];
     name: string;
 }

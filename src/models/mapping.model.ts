@@ -1,20 +1,16 @@
 import { Schema, model, Document } from 'mongoose';
 
-// Interface for the mapping field
 interface IMapping {
   originalField: string;
   desiredName: string;
   desiredType: string;
 }
 
-// Interface for the mapping document
 interface IMappingDocument extends Document {
-    fileName: string;
     mappings: IMapping[];
     name: string;
 }
 
-// Schema for individual mapping
 const MappingFieldSchema = new Schema<IMapping>({
   originalField: {
     type: String,
@@ -27,7 +23,7 @@ const MappingFieldSchema = new Schema<IMapping>({
   desiredType: {
     type: String,
     required: true,
-    enum: ['string', 'number'], // restrict to only these types
+    enum: ['string', 'number'], 
   },
 });
 
@@ -37,11 +33,6 @@ const MappingSchema = new Schema<IMappingDocument>({
       type: String,
     required: true,
       unique: true,
-  },
-  fileName: {
-    type: String,
-    required: true,
-    unique: true,
   },
   mappings: {
     type: [MappingFieldSchema],
@@ -54,10 +45,9 @@ const MappingSchema = new Schema<IMappingDocument>({
     ],
   },
 }, {
-  timestamps: true, // Adds createdAt and updatedAt fields
+  timestamps: true, 
 });
 
-// Create and export the model
 const MappingModel = model<IMappingDocument>('Mapping', MappingSchema);
 
 export default MappingModel;

@@ -3,7 +3,7 @@ import log from "../utils/log";
 import { readFileSync, existsSync } from 'fs';
 import path from 'path';
 import { parse } from 'csv-parse/sync';
-import { ProcessRequest } from "../types";
+import { ProcessRequest,SaveMappingRequest } from "../types";
 import MappingModel from "../models/mapping.model";
 interface ValidationError {
   row: number;
@@ -16,67 +16,66 @@ const transform = () => {
 
 }
 
+
 const MappingService = {
 
-
-
-  mapFieldNames: async (req: Request, res: Response): Promise<void> => {
-        const data = req.body as ProcessRequest;
-        const newMappingModel = new MappingModel(data);
-        await newMappingModel.save();
-        res.json(newMappingModel);
+    mapFieldNames: async (req: Request, res: Response): Promise<void> => {
+        try {
+            const data = req.body as SaveMappingRequest;
+            const newMappingModel = new MappingModel(data);
+            await newMappingModel.save();
+            res.json(newMappingModel);
+        } catch (error) {
+            log.error({ err: error }, 'Mapping error occurred');
+            res.status(500).json({ error: 'Failed to save mapping' });
+        }
     },  
     
-  process: (req: Request, res: Response): void => {
+  process: async (req: Request, res: Response): Promise<void> => {
     try {
-      const { fileName, mappings } = req.body as ProcessRequest;
-      const errors: ValidationError[] = [];
+        const { fileName, mappingName } = req.body as ProcessRequest;
+        const errors: ValidationError[] = [];
       
  
-      if (!fileName || !mappings) {
-        log.error('Missing required parameters');
-        res.status(400).json({ error: 'fileName and mappings are required' });
-        return;
-      }
+        if (!fileName || !mappingName) 
+            throw new Error('Missing required parameters');
+        
 
-      const filePath = path.join(__dirname, '../../uploads', fileName);
-
-      if (!existsSync(filePath)) {
-        log.error(`File not found: ${fileName}`);
-        res.status(404).json({ error: 'File not found' });
-        return;
-      }
-
-      const fileContent = readFileSync(filePath, 'utf-8');
-      const records = parse(fileContent, {
-        columns: true,
-        skip_empty_lines: true,
-        trim: true
-      });
-
-
-      if (records.length === 0) {
-        log.error('Empty CSV file');
-        res.status(400).json({ error: 'CSV file is empty' });
-        return;
-      }
-
-      const csvHeaders = Object.keys(records[0]);
-      const invalidFields = mappings.filter(m => !csvHeaders.includes(m.originalField));
+        const mappingData = await MappingModel.findOne({ name: mappingName }).lean();
       
-      if (invalidFields.length > 0) {
-        log.error('Invalid field mappings', { invalidFields });
-        res.status(400).json({ 
-          error: 'Invalid field mappings',
-          invalidFields: invalidFields.map(f => f.originalField)
+        if (!mappingData) 
+            throw new Error('Mapping not found');
+        
+        
+        const filePath = path.join(__dirname, '../../uploads', fileName);
+
+        if (!existsSync(filePath)) 
+            throw new Error('File not found');
+        
+
+        const fileContent = readFileSync(filePath, 'utf-8');
+        const records = parse(fileContent, {
+            columns: true,
+            skip_empty_lines: true,
+            trim: true
         });
-        return;
-      }
+
+
+        if (records.length === 0) 
+            throw new Error('No records found in the file');
+        
+
+        const csvHeaders = Object.keys(records[0]);
+        const invalidFields = mappingData.mappings.filter(m => !csvHeaders.includes(m.originalField));
+      
+        if (invalidFields.length > 0) 
+            throw new Error('Invalid field mappings');
+        
 
       const transformedData = records.map((record: any, rowIndex: number) => {
         const mappedRecord: Record<string, any> = {};
         
-        mappings.forEach(({originalField, desiredName, desiredType}) => {
+        mappingData.mappings.forEach(({originalField, desiredName, desiredType}) => {
           const value = record[originalField]?.trim();
           
           if (value === undefined || value === '') {
@@ -137,7 +136,8 @@ const MappingService = {
       });
 
     } catch (error) {
-      log.error({ err: error }, 'Processing error occurred');
+        log.error({ err: error }, 'Processing error occurred');
+        console.log(error);
       res.status(500).json({ error: 'Failed to process file' });
     }
   }
