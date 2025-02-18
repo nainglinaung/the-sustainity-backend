@@ -6,6 +6,7 @@ import multer from "multer";
 import path from "path";
 import UploadService from "./services/upload.services";
 import MappingService from "./services/mapping.services";
+import DataService from "./services/data.services";
 import log from "./utils/log";
 import dotenv from 'dotenv';
 
@@ -37,8 +38,10 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/file-uplo
       // Middleware setup
       // app.use(someMiddleware);
       app.post("/upload", upload.single("file"), UploadService.upload);
-      app.post('/save-mapping', MappingService.mapFieldNames);
+      app.post('/save-mapping', MappingService.saveMapping);
       app.post("/process", MappingService.process);
+      app.get('/preview/:fileName', MappingService.preview);
+      app.get('/data', DataService.getAll);
       
       app.get("/", (req, res) => {
         res.send("Hello, World!");
