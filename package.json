@@ -1,0 +1,20 @@
+{
+  "name": "the-sustainity-backend",
+  "version": "1.0.0",
+  "description": "## Overview This project is a TypeScript-based Node.js application that serves as a template for building scalable and maintainable applications.",
+  "main": "jest.config.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0"
+  }
+}
