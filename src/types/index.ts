@@ -12,3 +12,12 @@ export interface ProcessRequest {
     fileName: string;
     mappings: MappingDefinition[];
 }
+
+
+export interface ValidationError {
+    row: number;
+    field: string;
+    error: string;
+    value: string;
+  }
+  
