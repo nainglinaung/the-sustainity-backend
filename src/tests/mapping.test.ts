@@ -1,18 +1,18 @@
 import request from 'supertest';
 import { Express } from 'express';
 import path from 'path';
-import app from '../app';
+import fs from 'fs';
+import app from '../app'
 import MappingModel from '../models/mapping.model';
+// import UploadService from '../services/upload.services';
 import mongoose from 'mongoose';
 
 describe('Mapping API Endpoints', () => {
   let testApp: Express;
-
   beforeAll(async () => {
     testApp = app;
-    // Connect to test database
-    await mongoose.connect('mongodb://admin:password@localhost:27017/test-db?authSource=admin');
-  });
+    
+   });
 
   afterAll(async () => {
     await mongoose.connection.dropDatabase();
@@ -23,7 +23,7 @@ describe('Mapping API Endpoints', () => {
     await MappingModel.deleteMany({});
   });
 
-  describe('POST /api/mapping', () => {
+  describe('POST /save-mapping', () => {
     it('should create a new mapping', async () => {
       const mappingData = {
         name: "test-mapping",
@@ -35,41 +35,47 @@ describe('Mapping API Endpoints', () => {
       };
 
       const response = await request(testApp)
-        .post('/api/mapping')
+        .post('/save-mapping')
         .send(mappingData);
 
       expect(response.status).toBe(200);
+      expect(response.body).toMatchObject({});
       expect(response.body).toHaveProperty('name', mappingData.name);
     });
   });
 
-  describe('POST /api/mapping/preview', () => {
-    it('should preview CSV file', async () => {
-      const testFile = path.join(__dirname, '../fixtures/test.csv');
-      
-      const response = await request(testApp)
-        .post('/api/mapping/preview')
-        .send({ fileName: 'test.csv' });
-
-      expect(response.status).toBe(200);
-      expect(response.body).toHaveProperty('data');
-      expect(response.body).toHaveProperty('headers');
-      expect(response.body.data.length).toBeLessThanOrEqual(10);
-    });
-  });
 
   describe('POST /api/mapping/process', () => {
     it('should process CSV file with mapping', async () => {
+     
       const mappingData = {
-        fileName: 'test.csv',
-        mappingName: 'test-mapping'
+        name: "test-mapping",
+        mappings: [{
+          originalField: "header1",
+          desiredName: "brand",
+          desiredType: "string"
+        }]
       };
 
-      const response = await request(testApp)
-        .post('/api/mapping/process')
-        .send(mappingData);
+      // Mock Mapping
+      await MappingModel.create(mappingData);
+      
+      const testFilePath = path.join(__dirname, '../fixtures/test.csv');
+      const writeStream = fs.createWriteStream(testFilePath);
 
-      expect(response.status).toBe(200);
+      writeStream.write('header1,header2\nvalue1,value2');
+      writeStream.end();
+      
+      const mock = await request(testApp).post('/upload').attach('file', testFilePath);
+       
+      const response = await request(testApp)
+        .post('/process')
+        .send({
+            fileName: mock.body.fileName,
+            mappingName: 'test-mapping'
+          });
+
+      expect(response.status).toBe(200);      
       expect(response.body).toHaveProperty('data');
       expect(response.body).toHaveProperty('totalRecords');
     });

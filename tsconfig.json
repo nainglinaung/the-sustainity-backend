@@ -4,7 +4,7 @@
       "types": ["jest", "node"],
       "module": "commonjs",
       "outDir": "./dist",
-      "rootDir": "./src",
+      "rootDir": "./",
       "strict": true,
       "esModuleInterop": true,
       "skipLibCheck": true,
@@ -16,4 +16,4 @@
     },
     "include": ["src/**/*", "__test__/setup.ts"],
     "exclude": ["node_modules", "dist", "src/tests"]
-  }
+}

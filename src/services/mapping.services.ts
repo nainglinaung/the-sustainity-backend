@@ -3,8 +3,6 @@ import log from "../utils/log";
 import { readFileSync, existsSync } from 'fs';
 import path from 'path';
 import { parse } from 'csv-parse/sync';
-import csv from 'csv-parse'
-import { createReadStream } from 'fs';
 import { ProcessRequest,SaveMappingRequest } from "../types";
 import MappingModel from "../models/mapping.model";
 import DataModel from "../models/data.model";
@@ -24,56 +22,6 @@ const MappingService = {
         }
     },  
 
-    preview: async (req: Request, res: Response): Promise<void> => { 
-        try {
-            const { fileName } = req.params;
-            const filePath = path.join(__dirname, '../../uploads', fileName);
-    
-            if (!existsSync(filePath)) 
-                throw new Error('File not found');
-            
-    
-            const records: any[] = [];
-            let headers: string[] = [];
-            let totalRows = 0;
-    
-            const parser = createReadStream(filePath)
-                .pipe(csv.parse({
-                    columns: true,
-                    skip_empty_lines: true,
-                    trim: true
-                }));
-    
-            for await (const record of parser) {
-                totalRows++;
-                
-                if (totalRows === 1) {
-                    headers = Object.keys(record);
-                }
-    
-                if (records.length < 10) {
-                    records.push(record);
-                } else {
-                    parser.destroy();
-                    break;
-                }
-            }
-    
-            res.json({
-                data: records,
-                previewCount: records.length,
-                headers,
-                message: 'Preview of first 10 records'
-            });
-    
-        } catch (error) {
-            log.error({ err: error }, 'Preview error occurred');
-            res.status(500).json({ 
-                error: 'Failed to preview file',
-                details: error instanceof Error ? error.message : 'Unknown error'
-            });
-        }
-    },
     
     process: async (req: Request, res: Response): Promise<void> => {
         
@@ -81,7 +29,6 @@ const MappingService = {
             const { fileName, mappingName } = req.body as ProcessRequest;
             const errors: ValidationError[] = [];
         
-    
             if (!fileName || !mappingName) 
                 throw new Error('Missing required parameters');
             
@@ -184,6 +131,7 @@ const MappingService = {
         });
 
         } catch (error) {
+            console.log(error);
             log.error({ err: error }, 'Processing error occurred');
             res.status(500).json({ error});
         }
