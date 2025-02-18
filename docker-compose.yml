@@ -10,3 +10,20 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=5000
+      - MONGODB_URI=mongodb://admin:password@mongodb:27017/file-upload?authSource=admin
+    depends_on:
+      - mongodb
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: file-upload
+    volumes:
+      - mongodb_data:/data/db
+
+volumes:
+  mongodb_data:
