@@ -1,8 +1,8 @@
 {
     "compilerOptions": {
-      "target": "ES2020",
+      "target": "es6",
+      "types": ["jest", "node"],
       "module": "commonjs",
-      "lib": ["ES2020"],
       "outDir": "./dist",
       "rootDir": "./src",
       "strict": true,
@@ -14,6 +14,6 @@
       "sourceMap": true,
       "declaration": true
     },
-    "include": ["src/**/*"],
-    "exclude": ["node_modules", "dist", "tests"]
+    "include": ["src/**/*", "__test__/setup.ts"],
+    "exclude": ["node_modules", "dist", "src/tests"]
   }
