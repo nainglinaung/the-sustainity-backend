@@ -6,6 +6,20 @@ import multer from "multer";
 import path from "path";
 import UploadService from "./services/upload.services";
 import MappingService from "./services/mapping.services";
+import log from "./utils/log";
+
+import mongoose from 'mongoose';
+
+console.log(process.env.MONGODB_URI || 'mongodb://localhost:27017/file-upload')
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/file-upload')
+  .then(() => {
+    log.info('Connected to MongoDB');
+  })
+  .catch((error) => {
+    log.error('MongoDB connection error:', error);
+    process.exit(1);
+});
+
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -28,6 +42,7 @@ app.use(express.json());
 // Middleware setup
 // app.use(someMiddleware);
 app.post("/upload", upload.single("file"), UploadService.upload);
+app.post('/save-mapping', MappingService.mapFieldNames);
 app.post("/process", MappingService.process);
 
 app.get("/", (req, res) => {

@@ -4,7 +4,7 @@ import { readFileSync, existsSync } from 'fs';
 import path from 'path';
 import { parse } from 'csv-parse/sync';
 import { ProcessRequest } from "../types";
-
+import MappingModel from "../models/mapping.model";
 interface ValidationError {
   row: number;
   field: string;
@@ -17,6 +17,16 @@ const transform = () => {
 }
 
 const MappingService = {
+
+
+
+  mapFieldNames: async (req: Request, res: Response): Promise<void> => {
+        const data = req.body as ProcessRequest;
+        const newMappingModel = new MappingModel(data);
+        await newMappingModel.save();
+        res.json(newMappingModel);
+    },  
+    
   process: (req: Request, res: Response): void => {
     try {
       const { fileName, mappings } = req.body as ProcessRequest;
