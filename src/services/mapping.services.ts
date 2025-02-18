@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import log from "../utils/log";
 import { existsSync } from 'fs';
 import path from 'path';
-import { IMappingDocument, ProcessRequest,SaveMappingRequest } from "../types";
+import {  ProcessRequest,SaveMappingRequest } from "../types";
 import MappingModel from "../models/mapping.model";
 import { ValidationError } from "../types";
 import csvQueue from "../bull";

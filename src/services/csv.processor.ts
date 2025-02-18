@@ -1,7 +1,7 @@
 import { readFileSync, existsSync } from 'fs';
 import path from 'path';
 import { parse } from 'csv-parse/sync';
-import { ValidationError,JobData } from '../types';
+import { ValidationError,JobData, MappingDefinition } from '../types';
 import DataModel from '../models/data.model';
 import log from '../utils/log';
 
@@ -25,7 +25,7 @@ export async function processCsvFile(data: JobData) {
         throw new Error('No records found in the file');
     
     const csvHeaders = Object.keys(records[0]);
-    const invalidFields = mappingData.mappings.filter(m => !csvHeaders.includes(m.originalField));
+    const invalidFields = mappingData.mappings.filter( (m : MappingDefinition) => !csvHeaders.includes(m.originalField));
     
     if (invalidFields.length > 0) 
         throw new Error('Invalid field mappings');
@@ -33,7 +33,7 @@ export async function processCsvFile(data: JobData) {
     const transformedData = records.map((record: any, rowIndex: number) => {
         const mappedRecord: Record<string, any> = {};
         
-        mappingData.mappings.forEach(({originalField, desiredName, desiredType}) => {
+        mappingData.mappings.forEach(({originalField, desiredName, desiredType} : MappingDefinition ) => {
         const value = record[originalField]?.trim();
         
         if (value === undefined || value === '') {

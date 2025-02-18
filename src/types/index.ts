@@ -11,7 +11,7 @@ export   interface IMappingDocument extends Document {
   
   
 
-interface MappingDefinition {
+export interface MappingDefinition {
     originalField: string;
     desiredName: string;
     desiredType: 'string' | 'number' | 'date' | 'boolean';
