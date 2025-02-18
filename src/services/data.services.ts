@@ -35,7 +35,27 @@ const DataService = {
           details: error instanceof Error ? error.message : 'Unknown error'
         });
       }
+  },
+  
+  getOne: async (req: Request, res: Response): Promise<void> => { 
+    try {
+      const { id } = req.params;
+  
+      const data = await DataModel.findById
+        (id).lean();
+      
+      if (!data) {
+        throw new Error('Data not found');
+      }
+
+      res.json(data);
+
+    } catch (error: Error | any) {
+      res.status(400).json({ 
+        error: error?.message || 'Failed to fetch data',
+      });
     }
+  }
   };
 
 export default DataService;

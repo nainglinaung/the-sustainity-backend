@@ -1,6 +1,4 @@
-// filepath: /typescript-node-project/typescript-node-project/src/index.ts
-
-import express, { Request, Response } from "express";
+import express  from "express";
 import { config } from "./config";
 import multer from "multer";
 import path from "path";
@@ -35,19 +33,19 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/file-uplo
       
       app.use(express.json());
       
-      // Middleware setup
-      // app.use(someMiddleware);
+   
       app.post("/upload", upload.single("file"), UploadService.upload);
       app.post('/save-mapping', MappingService.saveMapping);
       app.post("/process", MappingService.process);
       app.get('/preview/:fileName', MappingService.preview);
       app.get('/data', DataService.getAll);
+      app.get('/data/:id', DataService.getOne);
       
       app.get("/", (req, res) => {
         res.send("Hello, World!");
       });
       
-      // Start the server
+
       const PORT = config.port || 5000;
       app.listen(PORT, () => {
         console.log(`Server is running on http://localhost:${PORT}`);
