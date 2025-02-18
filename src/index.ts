@@ -5,6 +5,7 @@ import { config } from "./config";
 import multer from "multer";
 import path from "path";
 import UploadService from "./services/upload.services";
+import MappingService from "./services/mapping.services";
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -22,9 +23,12 @@ const upload = multer({ storage });
 
 const app = express();
 
+app.use(express.json());
+
 // Middleware setup
 // app.use(someMiddleware);
 app.post("/upload", upload.single("file"), UploadService.upload);
+app.post("/process", MappingService.process);
 
 app.get("/", (req, res) => {
   res.send("Hello, World!");
