@@ -11,6 +11,7 @@ interface MappingDefinition {
 export interface ProcessRequest {
     fileName: string;
     mappings: MappingDefinition[];
+    name: string;
 }
 
 
