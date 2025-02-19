@@ -1,41 +1,61 @@
-# TypeScript Node.js Project
+# CSV Data Processing Service
 
-## Overview
-This project is a TypeScript-based Node.js application that serves as a template for building scalable and maintainable applications.
+A TypeScript Node.js application for processing and analyzing CSV data files.
 
 ## Features
-- TypeScript for type safety and modern JavaScript features
-- Modular structure for easy maintenance
-- Configuration management for environment variables
-- Utility functions for common tasks
-- Unit tests to ensure code quality
+
+- File upload with support for CSV files
+- Data preview functionality
+- Custom data mapping configuration
+- Bulk data processing using Bull queue
+- MongoDB integration for data persistence
+- RESTful API endpoints
+- Logging with Bunyan
+- Docker containerization
+
+## Prerequisites
+
+- Node.js (v18 or higher)
+- npm or yarn
+- MongoDB
+- Redis (for Bull queue)
+- Docker and Docker Compose (for containerized setup)
 
 ## Setup Instructions
-1. Clone the repository:
-   ```
-   git clone <repository-url>
-   ```
-2. Navigate to the project directory:
-   ```
-   cd typescript-node-project
-   ```
-3. Install dependencies:
-   ```
-   npm install
-   ```
-4. Run the application:
-   ```
-   npm start
-   ```
 
-## Usage
-- Modify the configuration settings in `src/config/index.ts` to suit your environment.
-- Add utility functions in `src/utils/index.ts` as needed.
-- Define TypeScript interfaces and types in `src/types/index.ts`.
-- Write unit tests in the `tests` directory.
+### Local Development
 
-## Contributing
-Contributions are welcome! Please open an issue or submit a pull request for any improvements or bug fixes.
+1. Clone the repository
+2. Install Required binaries for MongoDB and Redis and make sure it up and running
+3. Setting Environment variables in .env
 
-## License
-This project is licensed under the MIT License.
+```bash
+MONGODB_URI=mongodb://admin:password@mongodb:27017/file-upload?authSource=admin
+REDIS_HOST=redis
+REDIS_PORT=6379
+```
+
+4. Install packages 
+
+```bash
+npm i
+```
+
+5. starting the development environment
+
+```bash
+npm run dev
+```
+
+### Docker Setup 
+
+```bash
+docker compose up 
+```
+
+
+### Running the app
+
+/POST 
+
+
